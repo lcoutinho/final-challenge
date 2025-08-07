@@ -41,6 +41,7 @@ import { UnifiedThemeProvider } from '@backstage/theme';
 import { HomePage } from './components/home/HomePage';
 import {HomepageCompositionRoot} from '@backstage/plugin-home'
 import { EmployeesPage } from '@internal/plugin-employees';
+import { githubAuthApiRef } from '@backstage/core-plugin-api';
 
 const app = createApp({
   apis,
@@ -62,7 +63,15 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
+    SignInPage: props => <SignInPage {...props} auto      providers={[
+          'guest',
+          {
+            id: 'github-auth-provider',
+            title: 'GitHub',
+            message: 'Faça login com sua conta do GitHub',
+            apiRef: githubAuthApiRef,
+          },
+        ]} />,
   },
 
   themes : [
