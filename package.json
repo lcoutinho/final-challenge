@@ -53,6 +53,7 @@
   "packageManager": "yarn@4.4.1",
   "dependencies": {
     "@mui/icons-material": "^7.3.1",
-    "@mui/styles": "6.4.8"
+    "@mui/styles": "6.4.8",
+    "better-sqlite3": "^12.2.0"
   }
 }

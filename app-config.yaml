@@ -6,6 +6,10 @@ organization:
   name: My Company
 
 backend:
+  auth:
+    dangerouslyDisableDefaultAuthPolicy: true
+    skipMiddleware:
+      - '/api/audit/**'
   # Used for enabling authentication, secret is shared by all backend plugins
   # See https://backstage.io/docs/auth/service-to-service-auth for
   # information on the format
@@ -73,11 +77,17 @@ techdocs:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
 auth:
-  # see https://backstage.io/docs/auth/ to learn about auth providers
+  # Veja https://backstage.io/docs/auth/service-to-service-auth para mais detalhes
+  environment: development
+  session:
+    secret: '6a5652b0221a88c08cd2b6dc9e904b3225dc4f03a5301c60f14dacdde91c0d55'
   providers:
-    # See https://backstage.io/docs/auth/guest/provider
-    guest: {}
-    # See https://backstage.io/docs/auth/guest/provider
+    github:
+      development:
+        clientId: Ov23liQnCbMqcxOwBg0o
+        clientSecret: fe3516223dd10cec820f849f44019aa31d191673
+        signIn:
+          resolver: providers.github.resolvers.githubAllowAll
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options

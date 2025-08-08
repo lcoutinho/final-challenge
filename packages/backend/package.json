@@ -13,6 +13,9 @@
     "lint": "backstage-cli package lint",
     "test": "backstage-cli package test",
     "clean": "backstage-cli package clean",
+    "migrate:create": "backstage-cli backend:migrate:create",
+    "migrate:down": "backstage-cli backend:migrate:down",
+    "migrate:latest": "backstage-cli backend:migrate:latest",
     "build-image": "docker build ../.. -f Dockerfile --tag backstage"
   },
   "dependencies": {
@@ -40,6 +43,7 @@
     "@backstage/plugin-search-backend-module-techdocs": "^0.4.4",
     "@backstage/plugin-search-backend-node": "^1.3.13",
     "@backstage/plugin-techdocs-backend": "^2.0.4",
+    "@internal/plugin-audit-backend": "workspace:^",
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
     "cors": "^2.8.5",
@@ -48,7 +52,8 @@
   },
   "devDependencies": {
     "@backstage/cli": "^0.33.1",
-    "@types/cors": "^2"
+    "@types/cors": "^2",
+    "knex": "^3.1.0"
   },
   "files": [
     "dist"

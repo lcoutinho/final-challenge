@@ -7,6 +7,9 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
+import { auditPlugin } from '@internal/plugin-audit-backend';
+import { createBackendModule } from '@backstage/backend-plugin-api';
+
 
 const backend = createBackend();
 
@@ -58,6 +61,21 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 // kubernetes
 backend.add(import('@backstage/plugin-kubernetes-backend'));
 
+
+
+
+//backend.add(import('@internal/plugin-audit-backend'));
+/*import('@internal/plugin-audit-backend').then(m => {
+  console.log('Plugin audit importado:', m);
+  backend.add(m.default, { disableAuth: true });
+});
+
+const { auditPlugin } = await import('@internal/plugin-audit-backend');
+backend.add(auditPlugin);
+*/
+
+console.log('pluginModule audit-backend:', auditPlugin);
+backend.add(auditPlugin);
 
 
 
