@@ -80,12 +80,12 @@ auth:
   # Veja https://backstage.io/docs/auth/service-to-service-auth para mais detalhes
   environment: development
   session:
-    secret: '6a5652b0221a88c08cd2b6dc9e904b3225dc4f03a5301c60f14dacdde91c0d55'
+    secret: '${SECRET_SESSION_KEY}'
   providers:
     github:
       development:
-        clientId: Ov23liQnCbMqcxOwBg0o
-        clientSecret: fe3516223dd10cec820f849f44019aa31d191673
+        clientId: ${GITHUB_APP_CLIENT_ID}
+        clientSecret: ${GITHUB_APP_CLIENT_SECRET}
         signIn:
           resolver: providers.github.resolvers.githubAllowAll
 
