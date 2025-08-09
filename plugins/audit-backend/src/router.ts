@@ -1,5 +1,5 @@
 import { PluginDatabaseManager } from '@backstage/backend-common';
-import { LoggerService, HttpAuthService } from '@backstage/backend-plugin-api';
+import { LoggerService, HttpAuthService, DatabaseService } from '@backstage/backend-plugin-api';
 import { InputError } from '@backstage/errors';
 import { z } from 'zod';
 import express from 'express';
@@ -13,10 +13,32 @@ type RouterDeps = {
   database: PluginDatabaseManager;
 };
 
+async function setupDatabase(logger: LoggerService, database: PluginDatabaseManager): Promise<Knex> {
+  const dbClient = await database.getClient();
+  const tableName = 'proxy_logs';
+
+  const tableExists = await dbClient.schema.hasTable(tableName);
+
+  if (!tableExists) {
+    logger.info(`Tabela '${tableName}' não encontrada, a criar...`);
+    await dbClient.schema.createTable(tableName, table => {
+      table.increments('id').primary();
+      table.string('method').notNullable();
+      table.text('path').notNullable(); // 'text' é melhor para URLs
+      table.string('user').nullable();
+      table.integer('status').nullable();
+      table.timestamp('timestamp').defaultTo(dbClient.fn.now());
+    });
+    logger.info(`Tabela '${tableName}' criada com sucesso.`);
+  }
+
+  return dbClient;
+}
 
 export async function createRouter({ logger, database }: RouterDeps): Promise<express.Router> {
   const router = expressPromiseRouter();
-  const db = await database.getClient();
+  //const db = await database.getClient();
+  const db = await setupDatabase(logger, database);
 
   router.use(express.json());
 

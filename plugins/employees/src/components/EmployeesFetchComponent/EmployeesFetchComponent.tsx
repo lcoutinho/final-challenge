@@ -68,23 +68,47 @@ export const DenseTable = ({ users }: DenseTableProps) => {
 };
 
 export const EmployeesFetchComponent = () => {
-  const discoveryApi = useApi(discoveryApiRef);
-
   const configApi = useApi(configApiRef);
-      const fetchApi = useApi(fetchApiRef);
-
+  const fetchApi = useApi(fetchApiRef);
   const backendBaseUrl = configApi.getString('backend.baseUrl');
 
   const { value, loading, error } = useAsync(async (): Promise<User[]> => {
-    //const baseUrl = await discoveryApi.getBaseUrl('fetch-employees');
-    const baseUrl = `${backendBaseUrl}/api/proxy/fetch-employees`;
+    const proxyUrl = `${backendBaseUrl}/api/proxy/fetch-employees/users`;
+    const auditUrl = `${backendBaseUrl}/api/audit/log`;
 
-    const response = await fetchApi.fetch(`${baseUrl}/users`);
+    let responseStatus: number;
+    let responseData: User[];
 
-    if (!response.ok) {
-  throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      const response = await fetchApi.fetch(proxyUrl);
+      responseStatus = response.status;
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${responseStatus}`);
+      }
+      
+      responseData = await response.json();
+      return responseData; 
+
+    } finally {   
+      console.log(`Auditing call to ${proxyUrl} with status ${responseStatus}`);
+      try {
+        await fetchApi.fetch(auditUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            method: 'GET',
+            path: proxyUrl,
+            status: responseStatus,
+            user: 'user.frontend',
+          }),
+        });
+      } catch (logError) {
+        console.error('Failed to write audit log:', logError);
+      }
     }
-    return await response.json();
   }, []);
 
   if (loading) {
